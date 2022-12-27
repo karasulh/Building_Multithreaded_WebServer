@@ -4,4 +4,4 @@ Load the "127.0.0.1:7878" address from your browser to check it after calling "c
 Btw in some browsers, we could not load this page, so check it with another browsers if you couldnot succeed to see result.  
 
 - to run it by: **cargo run**
-- to load the web in browser: ** 127.0.0.1:7878/ ** 
+- to load the web in browser: **127.0.0.1:7878/** 
