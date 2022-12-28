@@ -21,22 +21,19 @@ fn handle_connection(mut stream:TcpStream){
     //let response = "HTTP/1.1 200 OK\r\n\r\n"; //Version 2
 
     let get = b"GET / HTTP/1.1\r\n"; //thanks to b we transform string to byte string: &str => &[u8;16]
-    if buffer.starts_with(get){
+    
+    let (status_line,filename) = if buffer.starts_with(get){
+        ("HTTP/1.1 200 OK\r\n\r\n","web.html")
 
-        let contents = fs::read_to_string("web.html").unwrap();
-        let response = format!("HTTP/1.1 200 OK\r\n\r\n{}",contents);
-    
-        stream.write(response.as_bytes()).unwrap(); //write response to stream
-        stream.flush().unwrap(); //flush means wait until all stream bytes are written. 
-    }
-    else{
-        let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
-        let contents = fs::read_to_string("404.html").unwrap();
-        let response = format!("{}{}",status_line,contents);
-    
-        stream.write(response.as_bytes()).unwrap(); //write response to stream
-        stream.flush().unwrap(); //flush means wait until all stream bytes are written. 
-    }
+    } else{
+        ("HTTP/1.1 404 NOT FOUND\r\n\r\n","404.html") 
+    };
+
+    let contents = fs::read_to_string(filename).unwrap(); //Version 3
+    let response = format!("{}{}",status_line,contents);//Version 3
+
+    stream.write(response.as_bytes()).unwrap();
+    stream.flush().unwrap();
 
 }
 
