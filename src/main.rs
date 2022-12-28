@@ -2,14 +2,20 @@ use std::io::prelude::*; //to get access to traits which let us read and write t
 use std::net::TcpListener;
 use std::net::TcpStream;
 use std::fs;
+use std::thread;
+use std::time::Duration;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap(); //HTTP default port but we can choose any.
+    //let pool = ThreadPool::new(4);
+
     for stream in listener.incoming(){   
         let stream = stream.unwrap();
-        handle_connection(stream);
-    } 
-    
+
+        thread::spawn(||{
+            handle_connection(stream);
+        });  
+    }  
 }
 
 fn handle_connection(mut stream:TcpStream){
@@ -21,10 +27,13 @@ fn handle_connection(mut stream:TcpStream){
     //let response = "HTTP/1.1 200 OK\r\n\r\n"; //Version 2
 
     let get = b"GET / HTTP/1.1\r\n"; //thanks to b we transform string to byte string: &str => &[u8;16]
-    
+    let sleep = b"GET /sleep HTTP/1.1\r\n";
+
     let (status_line,filename) = if buffer.starts_with(get){
         ("HTTP/1.1 200 OK\r\n\r\n","web.html")
-
+    } else if buffer.starts_with(sleep){
+        thread::sleep(Duration::from_secs(5));
+        ("HTTP/1.1 200 OK\r\n\r\n","web.html")
     } else{
         ("HTTP/1.1 404 NOT FOUND\r\n\r\n","404.html") 
     };
