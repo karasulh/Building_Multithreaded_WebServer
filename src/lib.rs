@@ -1,7 +1,8 @@
+#![allow(unused_imports)]
+#![allow(dead_code)]
+
 use std::thread::{self, JoinHandle};
-
 use std::sync::mpsc;//for sender-receiver
-
 use std::sync::Arc;
 use std::sync::Mutex;
 
