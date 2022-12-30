@@ -11,13 +11,16 @@ fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap(); //HTTP default port but we can choose any.
     let pool = ThreadPool::new(4);
 
-    for stream in listener.incoming(){   
+    for stream in listener.incoming().take(10){ //it will take 10 request, then the drop method will work.
+    //for stream in listener.incoming(){ //Infinite request
         let stream = stream.unwrap();
 
         pool.execute(||{
             handle_connection(stream);
         });  
     }  
+
+    println!("Shutting down");
 }
 
 fn handle_connection(mut stream:TcpStream){
@@ -47,6 +50,8 @@ fn handle_connection(mut stream:TcpStream){
     stream.flush().unwrap();
 
 }
+
+
 
 //call "cargo run" here. Then look at the "127.0.0.1:7878" address from your browser. 
 //You can load the address as "127.0.0.1:7878/" or "127.0.0.1:7878/something"
