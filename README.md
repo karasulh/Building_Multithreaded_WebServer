@@ -5,3 +5,4 @@ Btw in some browsers, we could not load this page, so check it with another brow
 
 - to run it by: **cargo run**
 - to load the web in browser: **127.0.0.1:7878/** 
+- to load the web in browser with 5 sec delay: **127.0.0.1:7878/sleep**
