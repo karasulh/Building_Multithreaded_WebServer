@@ -34,7 +34,7 @@ pub struct ThreadPool{
 }
 
 impl ThreadPool{
-    ///Create a new ThreadPool
+    /// Create a new ThreadPool
     /// 
     /// The size is the number of threads in Pool
     /// 
@@ -61,6 +61,13 @@ impl ThreadPool{
             sender
         }
     }
+    /// Send the closures as Message/Job 
+    /// 
+    /// The closure is the function which will be done by workers as threads
+    /// 
+    /// #Panics
+    /// 
+    /// The 'execute' function will panic if the sender could not send the message.
     //we deduce f from the signature of thread::spawn which takes closure as argument. 
     //Think FnOnce() as function without argument and return value
     //Send trait: transfer the closure from one thread to another
@@ -98,6 +105,15 @@ pub struct Worker{
 }
 
 impl Worker{
+    /// Create a new Worker
+    /// 
+    /// The id is the spesific number of Worker
+    /// 
+    /// The receiver is the receiver side of the channel 
+    /// 
+    /// #Panics
+    /// 
+    /// The 'new' function will panic if the mutex locking has a problem or the receiver has a problem.
     fn new(id:usize,receiver:Arc<Mutex<mpsc::Receiver<Message>>>)->Worker{
 
         let thread = thread::spawn(move ||{ 
