@@ -1,5 +1,6 @@
 #![allow(unused_imports)]
 #![allow(dead_code)]
+#![allow(unused_variables)]
 
 use std::thread::{self, JoinHandle};
 use std::sync::mpsc;//for sender-receiver
@@ -133,7 +134,6 @@ impl Worker{
                         break;
                     },
                 }
-
             }
         });
         Worker{
@@ -141,4 +141,31 @@ impl Worker{
             thread:Some(thread), 
         }
     }
+}
+
+
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn is_id_of_worker_thesame_wgiven(){
+        let id = 1;
+        let (sender, receiver) = mpsc::channel();
+        let receiver = Arc::new(Mutex::new(receiver)); 
+        assert_eq!(Worker::new(id,receiver).id,id);
+    }
+
+    #[test]
+    fn is_threadpool_workersvectorsize_3(){
+        let mut vecworkers:Vec<Worker>=Vec::new();
+        let (sender, receiver) = mpsc::channel();
+        let receiver = Arc::new(Mutex::new(receiver)); 
+        for id in 0..3{
+            vecworkers.push(Worker::new(id,Arc::clone(&receiver)));
+        }
+        assert_eq!(ThreadPool::new(3).workers.len(),vecworkers.len());
+    }
+
 }

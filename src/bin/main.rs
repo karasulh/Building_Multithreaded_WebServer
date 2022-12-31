@@ -8,7 +8,7 @@ use std::time::Duration;
 use web_server::ThreadPool; //we added lib.rs into src folder and moved main.rs into bin folder, than our web_server crate becomes a lib crate.
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:7878").unwrap(); //HTTP default port but we can choose any.
+    let listener = TcpListener::bind("127.0.0.1:7878").expect("Couldnot listen the port"); //HTTP default port but we can choose any.
     let pool = ThreadPool::new(4);
 
     for stream in listener.incoming().take(10){ //it will take 10 request, then the drop method will work.
@@ -26,7 +26,7 @@ fn main() {
 fn handle_connection(mut stream:TcpStream){
    
     let mut buffer= [0;512];
-    stream.read(&mut buffer).unwrap(); //write stream to buffer
+    stream.read(&mut buffer).expect("Failed to write stream to buffer"); //write stream to buffer
     
     //println!("Request:{}",String::from_utf8_lossy(&buffer[..]));//lossy means if there is invalid utf-8, replace invalid sequence with '?' char. //Version 1
     //let response = "HTTP/1.1 200 OK\r\n\r\n"; //Version 2
@@ -43,11 +43,11 @@ fn handle_connection(mut stream:TcpStream){
         ("HTTP/1.1 404 NOT FOUND\r\n\r\n","404.html") 
     };
 
-    let contents = fs::read_to_string(filename).unwrap(); //Version 3
+    let contents = fs::read_to_string(filename).expect("Failed to read file"); //Version 3
     let response = format!("{}{}",status_line,contents);//Version 3
 
-    stream.write(response.as_bytes()).unwrap();
-    stream.flush().unwrap();
+    stream.write(response.as_bytes()).expect("Failed to write buffer to stream");
+    stream.flush().unwrap();//be sure to write everyting
 
 }
 
